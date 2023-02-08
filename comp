@@ -1,0 +1,4 @@
+#!/bin/bash
+g++ -O3 -std=c++2a -m64 -c src/*.cpp -lGL -lglfw -lm -lpthread -lvulkan
+g++ -O3 -std=c++2a -m64 -o yace vendor/imgui/*.o *.o -lGL -lglfw -lm -lpthread -lvulkan
+rm *.o
