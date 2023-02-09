@@ -27,7 +27,7 @@ enum ProjectType {
     lua = 2,
 };
 
-const char c_hello_world[] = "#include <stdio.h>\n\nint main(int argc, char **argv) {\n\tprintf(\"Hello world!\\n\");\n}\n";
+const char c_hello_world[] = "#include <stdio.h>\n\nint main(int argc, char **argv) {\n\tprintf(\"Hello world!\");\n}\n";
 const char cpp_hello_world[] = "#include <iostream>\n\nint main(int argc, char **argv) {\n\tstd::cout << \"Hello world!\" << std::endl;\n}\n";
 const char lua_hello_world[] = "print(\"Hello world!\")";
 
@@ -102,6 +102,8 @@ private:
         fclose(file);
     }
 
+    std::string new_file_name;
+
 public:
     IniLoader project_ini;
     ProjectType project_type;
@@ -110,20 +112,41 @@ public:
 
     bool show_open = false;
     bool show_create_project = false;
+    bool show_add_file = false;
 
     std::string project_name_tmp;
     std::string project_path_tmp;
 
     Project() {
         project_ini.add_section(PR_SETT_SEC);
-        project_ini.add_var_to_section(PR_SETT_SEC, PR_PATH, ".");
-        project_ini.add_var_to_section(PR_SETT_SEC, PR_NAME, ".");
+        project_ini.add_var_to_section(PR_SETT_SEC, PR_PATH, "");
+        project_ini.add_var_to_section(PR_SETT_SEC, PR_NAME, "");
         project_ini.add_var_to_section(PR_SETT_SEC, PR_LANG, project_languages[0]);
 
         project_ini.add_section(PR_FILES_SEC);
         project_ini.add_var_to_section(PR_FILES_SEC, "", "");
     }
 
+    void add_file_menu() {
+        if(show_add_file) {
+            if(ImGui::Begin("Add file")) {
+                new_file_name.resize(1024);
+
+                if(ImGui::InputText("File name", new_file_name.data(), 1024, ImGuiInputTextFlags_EnterReturnsTrue)) {
+                    new_file_name.erase(new_file_name.begin() + new_file_name.find_first_of((char)0), new_file_name.end());
+
+                    add_file_to_project(new_file_name);
+
+                    new_file_name.clear();
+
+                    show_add_file = false;
+                }
+
+                ImGui::End();
+            }
+        }
+    }
+    
     void ShowOpenWindow() {
         if(show_open) {
             if(ImGui::Begin("Open project", &show_open)) {
@@ -135,6 +158,8 @@ public:
                     open_path.erase(open_path.begin() + open_path.find_first_of((char)0), open_path.end());
 
                     load_project(open_path);
+
+                    show_open = false;
                 }
 
                 ImGui::End();

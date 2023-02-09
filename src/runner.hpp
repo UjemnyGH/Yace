@@ -20,6 +20,34 @@ private:
     std::string path = "";
     IniLoader run_config_loader;
     bool show_config_editing = false;
+    std::string output;
+    bool show_output = false;
+
+    std::string execute(std::string command) {
+        char buffer[256];
+        
+        std::string result;
+
+        FILE *pipe = popen(command.c_str(), "r");
+
+        while(fgets(buffer, sizeof(buffer), pipe) != NULL) {
+            result += buffer;
+        }
+
+        pclose(pipe);
+
+        return result;
+    }
+
+    void show_comp_and_run_output() {
+        if(show_output) {
+            if(ImGui::Begin("Output", &show_output)) {
+                ImGui::Text("%s", output.c_str());
+
+                ImGui::End();
+            }
+        }
+    }
 
     void config_editor() {
         if(show_config_editing) {
@@ -28,19 +56,19 @@ private:
 
                 if(ImGui::CollapsingHeader("Compiler")) {
                     run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_NAME].value.resize(256);
-                    ImGui::InputText("Compiler name", run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_NAME].value.data(), 256, ImGuiInputTextFlags_CharsNoBlank);
+                    ImGui::InputText("Compiler name", run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_NAME].value.data(), 256);
                     run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_NAME].value.erase(run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_NAME].value.begin() + 
                         run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_NAME].value.find_first_of((char)0), 
                         run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_NAME].value.end());
 
                     run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_FRONT].value.resize(1024);
-                    ImGui::InputText("Compiler arguments front", run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_FRONT].value.data(), 1024, ImGuiInputTextFlags_CharsNoBlank);
+                    ImGui::InputText("Compiler arguments front", run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_FRONT].value.data(), 1024);
                     run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_FRONT].value.erase(run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_FRONT].value.begin() + 
                         run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_FRONT].value.find_first_of((char)0), 
                         run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_FRONT].value.end());
 
                     run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_BACK].value.resize(1024);
-                    ImGui::InputText("Compiler arguments back", run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_BACK].value.data(), 1024, ImGuiInputTextFlags_CharsNoBlank);
+                    ImGui::InputText("Compiler arguments back", run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_BACK].value.data(), 1024);
                     run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_BACK].value.erase(run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_BACK].value.begin() + 
                         run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_BACK].value.find_first_of((char)0), 
                         run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_BACK].value.end());
@@ -54,7 +82,7 @@ private:
 
                 if(ImGui::CollapsingHeader("Runner")) {
                     run_config_loader.sections[RUN_SECTION_NAME].vars[RUN_DEFAULT_ARGS].value.resize(1024);
-                    ImGui::InputText("Arguments passed while running app", run_config_loader.sections[RUN_SECTION_NAME].vars[RUN_DEFAULT_ARGS].value.data(), 1024, ImGuiInputTextFlags_CharsNoBlank);
+                    ImGui::InputText("Arguments passed while running app", run_config_loader.sections[RUN_SECTION_NAME].vars[RUN_DEFAULT_ARGS].value.data(), 1024);
                     run_config_loader.sections[RUN_SECTION_NAME].vars[RUN_DEFAULT_ARGS].value.erase(run_config_loader.sections[RUN_SECTION_NAME].vars[RUN_DEFAULT_ARGS].value.begin() + 
                         run_config_loader.sections[RUN_SECTION_NAME].vars[RUN_DEFAULT_ARGS].value.find_first_of((char)0), 
                         run_config_loader.sections[RUN_SECTION_NAME].vars[RUN_DEFAULT_ARGS].value.end());
@@ -66,6 +94,15 @@ private:
                     //run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_NAME].value.erase(run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_NAME].value.begin());
                     //run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_FRONT].value.erase(run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_FRONT].value.begin());
                     //run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_BACK].value.erase(run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_BACK].value.begin());
+
+                    run_config_loader.sections[COMPILE_SECTION_NAME].name = COMPILE_SECTION_NAME;
+                    run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_BACK].name = COMPILER_ARGS_BACK;
+                    run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_FRONT].name = COMPILER_ARGS_FRONT;
+                    run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_NAME].name = COMPILER_NAME;
+
+                    run_config_loader.sections[RUN_SECTION_NAME].name = RUN_SECTION_NAME;
+                    run_config_loader.sections[RUN_SECTION_NAME].vars[EXECUTABLE_NAME].name = EXECUTABLE_NAME;
+                    run_config_loader.sections[RUN_SECTION_NAME].vars[RUN_DEFAULT_ARGS].name = RUN_DEFAULT_ARGS;
 
                     save_runner_config();
                     load_runner_config();
@@ -126,7 +163,9 @@ public:
     void ShowRunner() {
         if(ImGui::Begin("##runner_win", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize)) {
             if(ImGui::Button("Run")) {
-                system((std::string("./") + run_config_loader.sections[RUN_SECTION_NAME].vars[EXECUTABLE_NAME].value + std::string(" ") + run_config_loader.sections[RUN_SECTION_NAME].vars[RUN_DEFAULT_ARGS].value).c_str());
+                show_output = true;
+
+                output = execute((std::string("./") + project->project_ini.sections[PR_SETT_SEC].vars[PR_PATH].value + "/" + run_config_loader.sections[RUN_SECTION_NAME].vars[EXECUTABLE_NAME].value + std::string(" ") + run_config_loader.sections[RUN_SECTION_NAME].vars[RUN_DEFAULT_ARGS].value).c_str());
             }
 
             ImGui::SameLine();
@@ -144,9 +183,12 @@ public:
                     prefix = ".lua";
                 }
 
-                system((run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_NAME].value + std::string(" ") + 
+                show_output = true;
+
+                output = execute((run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_NAME].value + std::string(" ") + 
                     run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_FRONT].value + std::string(" ") + 
-                    run_config_loader.sections[RUN_SECTION_NAME].vars[EXECUTABLE_NAME].value + std::string(" ") + 
+                    project->project_ini.sections[PR_SETT_SEC].vars[PR_PATH].value + "/" + 
+                    run_config_loader.sections[RUN_SECTION_NAME].vars[EXECUTABLE_NAME].value  + std::string(" ") + 
                     project->project_ini.sections[PR_SETT_SEC].vars[PR_PATH].value + "/src/*" + prefix + " " +
                     run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_BACK].value).c_str());
             }
@@ -166,14 +208,16 @@ public:
                     prefix = ".lua";
                 }
 
-                system((run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_NAME].value + std::string(" ") + 
+                show_output = true;
+
+                output = execute((run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_NAME].value + std::string(" ") + 
                     run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_FRONT].value + std::string(" ") + 
-                    run_config_loader.sections[RUN_SECTION_NAME].vars[EXECUTABLE_NAME].value + std::string(" ") + 
+                    project->project_ini.sections[PR_SETT_SEC].vars[PR_PATH].value + "/" +
+                    run_config_loader.sections[RUN_SECTION_NAME].vars[EXECUTABLE_NAME].value  + std::string(" ") + 
                     project->project_ini.sections[PR_SETT_SEC].vars[PR_PATH].value + "/src/*" + prefix + " " +
                     run_config_loader.sections[COMPILE_SECTION_NAME].vars[COMPILER_ARGS_BACK].value).c_str());
 
-                system((std::string("./") + run_config_loader.sections[RUN_SECTION_NAME].vars[EXECUTABLE_NAME].value + std::string(" ") + run_config_loader.sections[RUN_SECTION_NAME].vars[RUN_DEFAULT_ARGS].value).c_str());
-            }
+                output += execute((std::string("./") + project->project_ini.sections[PR_SETT_SEC].vars[PR_PATH].value + "/" + run_config_loader.sections[RUN_SECTION_NAME].vars[EXECUTABLE_NAME].value + std::string(" ") + run_config_loader.sections[RUN_SECTION_NAME].vars[RUN_DEFAULT_ARGS].value).c_str());            }
 
             ImGui::SameLine();
 
@@ -185,5 +229,6 @@ public:
         }
 
         config_editor();
+        show_comp_and_run_output();
     }
 };
