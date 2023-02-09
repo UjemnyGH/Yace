@@ -64,9 +64,9 @@ public:
                 }
 
                 ImGui::InputTextMultiline("##", code_buffer.data(), code_buffer.size(), ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y - 55.0f), ImGuiInputTextFlags_AllowTabInput);
-
-                ImGui::End();
             }
+
+            ImGui::End();
         }
     }
 };

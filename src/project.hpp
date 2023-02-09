@@ -37,19 +37,19 @@ private:
         project_ini.sections.clear();
 
         project_ini.add_section(PR_SETT_SEC);
-        project_ini.add_var_to_section(PR_SETT_SEC, PR_PATH, path + "/" + project_name);
+        project_ini.add_var_to_section(PR_SETT_SEC, PR_PATH, path);
         project_ini.add_var_to_section(PR_SETT_SEC, PR_NAME, project_name);
         project_ini.add_var_to_section(PR_SETT_SEC, PR_LANG, project_languages[0]);
 
         project_ini.add_section(PR_FILES_SEC);
         project_ini.add_var_to_section(PR_FILES_SEC, "main", "src/main.c");
 
-        project_ini.save_ini(path + "/" + project_name + "/" + project_name);
-
-        system(("mkdir " + path + "/" + project_name).c_str());
-        system(("mkdir " + path + "/" + project_name + "/src").c_str());
+        system(("mkdir " + path).c_str());
+        system(("mkdir " + path + "/src").c_str());
         
-        FILE* file = fopen((path + "/" + project_name + "/src/main.c").c_str(), "wb+");
+        project_ini.save_ini(path + "/" + project_name);
+
+        FILE* file = fopen((path + "/src/main.c").c_str(), "wb+");
 
         fwrite(c_hello_world, sizeof(char), strlen(c_hello_world), file);
 
@@ -60,19 +60,19 @@ private:
         project_ini.sections.clear();
 
         project_ini.add_section(PR_SETT_SEC);
-        project_ini.add_var_to_section(PR_SETT_SEC, PR_PATH, path + "/" + project_name);
+        project_ini.add_var_to_section(PR_SETT_SEC, PR_PATH, path);
         project_ini.add_var_to_section(PR_SETT_SEC, PR_NAME, project_name);
         project_ini.add_var_to_section(PR_SETT_SEC, PR_LANG, project_languages[1]);
 
         project_ini.add_section(PR_FILES_SEC);
         project_ini.add_var_to_section(PR_FILES_SEC, "main", "src/main.cpp");
 
-        project_ini.save_ini(path + "/" + project_name + "/" + project_name);
-
-        system(("mkdir " + path + "/" + project_name).c_str());
-        system(("mkdir " + path + "/" + project_name + "/src").c_str());
+        system(("mkdir " + path).c_str());
+        system(("mkdir " + path + "/src").c_str());
         
-        FILE* file = fopen((path + "/" + project_name + "/src/main.cpp").c_str(), "wb+");
+        project_ini.save_ini(path + "/" + project_name);
+        
+        FILE* file = fopen((path + "/src/main.cpp").c_str(), "wb+");
 
         fwrite(cpp_hello_world, sizeof(char), strlen(cpp_hello_world), file);
 
@@ -83,19 +83,19 @@ private:
         project_ini.sections.clear();
 
         project_ini.add_section(PR_SETT_SEC);
-        project_ini.add_var_to_section(PR_SETT_SEC, PR_PATH, path + "/" + project_name);
+        project_ini.add_var_to_section(PR_SETT_SEC, PR_PATH, path);
         project_ini.add_var_to_section(PR_SETT_SEC, PR_NAME, project_name);
         project_ini.add_var_to_section(PR_SETT_SEC, PR_LANG, project_languages[2]);
 
         project_ini.add_section(PR_FILES_SEC);
         project_ini.add_var_to_section(PR_FILES_SEC, "main", "src/main.lua");
 
-        project_ini.save_ini(path + "/" + project_name + "/" + project_name);
-
-        system(("mkdir " + path + "/" + project_name).c_str());
-        system(("mkdir " + path + "/" + project_name + "/src").c_str());
+        system(("mkdir " + path).c_str());
+        system(("mkdir " + path + "/src").c_str());
         
-        FILE* file = fopen((path + "/" + project_name + "/src/main.lua").c_str(), "wb+");
+        project_ini.save_ini(path + "/" + project_name);
+        
+        FILE* file = fopen((path + "/src/main.lua").c_str(), "wb+");
 
         fwrite(lua_hello_world, sizeof(char), strlen(lua_hello_world), file);
 
@@ -141,9 +141,9 @@ public:
 
                     show_add_file = false;
                 }
-
-                ImGui::End();
             }
+
+            ImGui::End();
         }
     }
     
@@ -161,9 +161,9 @@ public:
 
                     show_open = false;
                 }
-
-                ImGui::End();
             }
+            
+            ImGui::End();
         }
     }
 
@@ -200,7 +200,7 @@ public:
 
                     show_create_project = false;
                 }
-
+            
                 ImGui::End();
             }
         }

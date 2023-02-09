@@ -36,9 +36,9 @@ public:
                 const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
                 if(ImGui::BeginChild("##cmd_output", ImVec2(0, -footer_height_to_reserve), true, ImGuiWindowFlags_HorizontalScrollbar)) {
                     ImGui::Text("%s", command_output.c_str());
-
-                    ImGui::EndChild();
                 }
+
+                ImGui::EndChild();
 
                 ImGui::Separator();
 
@@ -54,9 +54,9 @@ public:
 
                     ImGui::SetKeyboardFocusHere(-1);
                 }
-
-                ImGui::End();
             }
+
+            ImGui::End();
         }
     }
 };

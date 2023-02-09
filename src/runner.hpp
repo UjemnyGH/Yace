@@ -43,9 +43,9 @@ private:
         if(show_output) {
             if(ImGui::Begin("Output", &show_output)) {
                 ImGui::Text("%s", output.c_str());
-
-                ImGui::End();
             }
+            
+            ImGui::End();
         }
     }
 
@@ -123,9 +123,9 @@ private:
                     init_loader();
                     save_runner_config();
                 }
-
-                ImGui::End();
             }
+            
+            ImGui::End();
         }
     }
 
@@ -224,9 +224,9 @@ public:
             if(ImGui::Button("Edit config")) {
                 show_config_editing = true;
             }
-
-            ImGui::End();
         }
+        
+        ImGui::End();
 
         config_editor();
         show_comp_and_run_output();

@@ -45,7 +45,7 @@ void yace_window::Update() {
         }
 
         if(ImGui::MenuItem("Exit")) { printf("User request exit!\n"); exit(0); }
-
+        
         ImGui::EndMenu();
     }
 
@@ -53,7 +53,7 @@ void yace_window::Update() {
         ImGui::MenuItem("File explorer", "", &file_explorer.show_file_explorer);
         ImGui::MenuItem("Command line", "", &command_line.show_command_line);
         ImGui::MenuItem("Text editor", "", &text_editor.show_text_editor);
-
+    
         ImGui::EndMenu();
     }
 

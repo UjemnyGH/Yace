@@ -33,9 +33,9 @@ public:
 
                     ImGui::EndPopup();
                 }
-
-                ImGui::End();
             }
+
+            ImGui::End();
 
             project->add_file_menu();
         }
