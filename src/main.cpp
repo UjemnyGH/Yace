@@ -24,6 +24,7 @@ void yace_window::Start() {
 
     runner.pass_project(&project);
     file_explorer.project = &project;
+    text_editor.cmd_opened = &command_line.show_command_line;
 }
 
 void yace_window::Update() {
@@ -53,6 +54,7 @@ void yace_window::Update() {
         ImGui::MenuItem("File explorer", "", &file_explorer.show_file_explorer);
         ImGui::MenuItem("Command line", "", &command_line.show_command_line);
         ImGui::MenuItem("Text editor", "", &text_editor.show_text_editor);
+        ImGui::MenuItem("Forced aligment", "", &forced_aligment);
     
         ImGui::EndMenu();
     }

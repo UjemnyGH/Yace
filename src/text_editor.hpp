@@ -1,17 +1,22 @@
 #pragma once
 
 #include "../vendor/imgui/imgui.h"
+#include "forced_aligment.hpp"
 #include <string>
 #include <fstream>
 
 class TextEditor {
 private:
+    void InputTextMultilineColorCoded() {
+        
+    }
 
 public:
     std::string code_buffer;
     std::string path;
 
     bool show_text_editor = false;
+    bool *cmd_opened;
 
     void OpenFile(std::string file) {
         path = file;
@@ -31,7 +36,20 @@ public:
 
     void ShowTextEditor() {
         if(show_text_editor) {
-            if(ImGui::Begin("Text editor", &show_text_editor, ImGuiWindowFlags_MenuBar)) {
+            if(forced_aligment) {
+                if(*cmd_opened) {
+                    ImGuiViewport *vp = ImGui::GetMainViewport();
+                    ImGui::SetNextWindowPos(ImVec2(vp->WorkPos.x + 324, vp->WorkPos.y));
+                    ImGui::SetNextWindowSize(ImVec2(vp->WorkSize.x - 324, vp->WorkSize.y - 200));
+                }
+                else {
+                    ImGuiViewport *vp = ImGui::GetMainViewport();
+                    ImGui::SetNextWindowPos(ImVec2(vp->WorkPos.x + 324, vp->WorkPos.y));
+                    ImGui::SetNextWindowSize(ImVec2(vp->WorkSize.x - 324, vp->WorkSize.y));
+                }
+            }
+
+            if(ImGui::Begin("##text_editor", &show_text_editor, ImGuiWindowFlags_MenuBar)) {
                 if(ImGui::BeginMenuBar()) {
                     if(ImGui::BeginMenu("File")) {
                         if(ImGui::MenuItem("Save")) {
@@ -63,7 +81,7 @@ public:
                     ImGui::EndMenuBar();
                 }
 
-                ImGui::InputTextMultiline("##", code_buffer.data(), code_buffer.size(), ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y - 55.0f), ImGuiInputTextFlags_AllowTabInput);
+                ImGui::InputTextMultiline("##code_text_lines", code_buffer.data(), code_buffer.size(), ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowHeight() - 55), ImGuiInputTextFlags_AllowTabInput);
             }
 
             ImGui::End();

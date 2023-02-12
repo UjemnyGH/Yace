@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../vendor/imgui/imgui.h"
+#include "forced_aligment.hpp"
 #include <string>
 #include <iostream>
 #include <cstdio>
@@ -30,6 +31,12 @@ public:
 
     void ShowCommandLine() {
         if(show_command_line) {
+            if(forced_aligment) {
+                ImGuiViewport *vp = ImGui::GetMainViewport();
+                ImGui::SetNextWindowPos(ImVec2(vp->WorkPos.x + 324, vp->Size.y - 200));
+                ImGui::SetNextWindowSize(ImVec2(vp->WorkSize.x - 324, 200));
+            }
+
             if(ImGui::Begin("Command line", &show_command_line)) {
                 command.resize(2048);
 

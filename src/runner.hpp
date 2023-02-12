@@ -3,6 +3,7 @@
 #include <string>
 #include "ini_loader.hpp"
 #include "../vendor/imgui/imgui.h"
+#include "forced_aligment.hpp"
 #include "project.hpp"
 
 #define COMPILE_SECTION_NAME "compile_conf"
@@ -161,6 +162,12 @@ public:
     }
 
     void ShowRunner() {
+        if(forced_aligment) {
+            ImGuiViewport *vp = ImGui::GetMainViewport();
+            ImGui::SetNextWindowPos(ImVec2(0, vp->WorkPos.y));
+            ImGui::SetNextWindowSize(ImVec2(324, 35));
+        }
+
         if(ImGui::Begin("##runner_win", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize)) {
             if(ImGui::Button("Run")) {
                 show_output = true;

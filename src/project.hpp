@@ -149,6 +149,7 @@ public:
     
     void ShowOpenWindow() {
         if(show_open) {
+            ImGui::SetNextWindowSize(ImVec2(335, 55));
             if(ImGui::Begin("Open project", &show_open)) {
                 std::string open_path;
 
@@ -169,6 +170,7 @@ public:
 
     void ShowCreateProject() {
         if(show_create_project) {
+            ImGui::SetNextWindowSize(ImVec2(345, 130));
             if(ImGui::Begin("Create project", &show_create_project)) {
                 project_name_tmp.resize(2048);
                 project_path_tmp.resize(2048);
